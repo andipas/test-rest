@@ -33,6 +33,7 @@ class RestTest extends TestCase
                 'title' => 'Book of the number ' . $i,
                 'author_id' => rand(1, 5),
                 'status' => Book::STATUS_IS_IN_PLACE,
+                'isbn' => 'isbn-'.$i,
             ];
 
             $this->json('POST', '/api/books', $data)
