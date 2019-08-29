@@ -29,19 +29,41 @@ class BookRequest extends FormRequest
             'status' => 'required|min:1|max:2'
         ];
 
+        $rulesSafe = [
+            'title' => 'string',
+            'author_id' => 'integer|min:1',
+            'status' => 'integer|min:1|max:2'
+        ];
+
         switch ($this->getMethod())
         {
             case 'POST':
                 return $rules;
             case 'PUT':
                 return [
-                        'author_id' => 'required|integer|exists:authors,id',
-                    ] + $rules;
-            // case 'PATCH':
+                        'book_id' => 'required|integer|exists:books,id',
+                    ] + $rulesSafe;
+            case 'PATCH':
+                return [
+                        'book_id' => 'required|integer|exists:books,id',
+                    ] + $rulesSafe;
             case 'DELETE':
                 return [
                     'book_id' => 'required|integer|exists:books,id'
                 ];
         }
+    }
+
+    public function all($keys = null)
+    {
+        $data = parent::all($keys);
+        switch ($this->getMethod())
+        {
+            // case 'PUT':
+            // case 'PATCH':
+            case 'DELETE':
+                $data['date'] = $this->route('day');
+        }
+        return $data;
     }
 }

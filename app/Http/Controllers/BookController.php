@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Book;
+use App\Http\Requests\BookRequest;
 use Illuminate\Http\Request;
 
 class BookController extends Controller
@@ -14,28 +15,19 @@ class BookController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return Book::all();
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  BookRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(BookRequest $request)
     {
-        //
+        $book = Book::create($request->all());
+        return response()->json($book, 201);
     }
 
     /**
@@ -46,30 +38,13 @@ class BookController extends Controller
      */
     public function show(Book $book)
     {
-        //
+        return $book;
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Book  $book
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Book $book)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Book  $book
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, Book $book)
     {
-        //
+        $book->update($request->all());
+        return response()->json($book, 200);
     }
 
     /**
@@ -80,6 +55,20 @@ class BookController extends Controller
      */
     public function destroy(Book $book)
     {
-        //
+        $book->delete();
+
+        return response()->json(null, 204);
+    }
+
+    public function search($title)
+    {
+        $books = Book::where('title', 'like', "%$title%")->get();
+        return response()->json($books, 200);
+    }
+
+    public function searchByAuthor($id)
+    {
+        $books = Book::where('author_id', '=', $id)->get();
+        return response()->json($books, 200);
     }
 }
